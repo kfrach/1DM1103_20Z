@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
     }
 
     for (i=0; i<n;i++)
-    {
+    {       
         s= v[i]*v[i];
         x = v[i];
     }
