@@ -55,80 +55,37 @@ int wczytaj(student dane[100], char *fnazwa) {
     return cnt;
 }
 
+void wypisz(student dane[100], int n) {
+    int i;
+    for (i=0; i<n;i++) {
+        printf("{ Student: %s - %s %s, z przedmiotu: [%s] %s za ECTS: %d otrzymał %.1f\n",
+            dane[i].nr_albumu, dane[i].imie, dane[i].nazwisko,
+            dane[i].kod_przed, dane[i].nazwa_przed,
+            dane[i].ects, dane[i].ocena
+        );
+    }
+}
 
-
-int znajdz(char *szukany_przedmiot, char nazwa_przed[100][255], int n) {
+int znajdz(char *szukany_nr, char nr_albumow[100][10], int n) {
     int i;
     for (i=0; i<n; i++) {
-        if (strcmp(szukany_przedmiot, nazwa_przed[i]) == 0)
+        if (strcmp(szukany_nr, nr_albumow[i]) == 0)
             return i;
     }
     return -1;
 }
 
-int znajdz_przedmioty(char nazwa_przed[100][255], student dane[100], int n) {
+int znajdz_studentow(char nr_albumow[100][10], student dane[100], int n) {
     int ile_znalazlem = 0;
     int i;
 
     for (i=0; i <n; i++) {
-        if (znajdz(dane[i].nazwa_przed, nazwa_przed, ile_znalazlem ) == -1) {
-            strncpy(nazwa_przed[ile_znalazlem], dane[i].nazwa_przed, 244);
+        if (znajdz(dane[i].nr_albumu, nr_albumow, ile_znalazlem ) == -1) {
+            strncpy(nr_albumow[ile_znalazlem], dane[i].nr_albumu, 9);
             ile_znalazlem++;
         }
     }
     return ile_znalazlem;
-}
-
-
-void najlepszy_przedmiot(student dane[100], int ile_rekordow) {
-    char nazwa_przedmiotow[100][255];
-    char kod_przedmiotow[100][10];
-    int ile_przedmiotow=0;
-    
-    float sumy_wazonych_ocen[100];
-    int i;
-    int pozycja=0;
-    int najlepsza_pozycja=0;
-    int najgorsza_pozycja=0;
-    float najlepsza = 0.0f;
-    float najgorsza = 0.0f;
-    int liczba_ocen[10];
-
-    ile_przedmiotow = znajdz_przedmioty(nazwa_przedmiotow, dane, ile_rekordow);
-    
-
-    for (i=0; i < ile_rekordow; i++) {
-        pozycja = znajdz( dane[i].nazwa_przed, nazwa_przedmiotow, ile_przedmiotow );
-        // if (pozycje >= 0)
-        sumy_wazonych_ocen[pozycja] += dane[i].ocena;
-        liczba_ocen[pozycja] = liczba_ocen[pozycja] +1;
-        strcpy(kod_przedmiotow[pozycja] ,dane[i].kod_przed);
-    }    
-
-
-    for (i=0; i < ile_przedmiotow; i++) {
-        if (najlepsza < sumy_wazonych_ocen[i] / liczba_ocen[i]) {
-            najlepsza = sumy_wazonych_ocen[i] / liczba_ocen[i];
-            najlepsza_pozycja = i;
-        
-        }
-    
-    
-        if (najgorsza > sumy_wazonych_ocen[i] / liczba_ocen[i]) {
-            najgorsza = sumy_wazonych_ocen[i] / liczba_ocen[i];
-            najgorsza_pozycja = i;
-        }
-    } 
-    
-    printf("Najlepsza średnia: %s - %s: %f\n ", 
-        nazwa_przedmiotow[najlepsza_pozycja], kod_przedmiotow[najlepsza_pozycja],
-        sumy_wazonych_ocen[najlepsza_pozycja] / liczba_ocen[najlepsza_pozycja]
-    );
-    printf("Najgorsza średnia: %s - %s: %f\n ", 
-        nazwa_przedmiotow[najgorsza_pozycja], kod_przedmiotow[najgorsza_pozycja],
-        sumy_wazonych_ocen[najgorsza_pozycja] / liczba_ocen[najgorsza_pozycja]
-    );
-
 }
 
 void najlepszy_student(student dane[100], int ile_rekordow) {
@@ -152,7 +109,7 @@ void najlepszy_student(student dane[100], int ile_rekordow) {
     }    
 
     for (i=0;i<ile_studentow; i++) 
-        printf("Student [%d]: %s - %f:%d - %f \n", i+1, nr_albumow[i], 
+        printf("Student [%d]: %s - %f:%d - %f \n", i, nr_albumow[i], 
         sumy_wazonych_ocen[i], sumy_ects[i], sumy_wazonych_ocen[i] / sumy_ects[i]);
 
     for (i=0; i < ile_studentow; i++) {
@@ -168,16 +125,17 @@ void najlepszy_student(student dane[100], int ile_rekordow) {
         sumy_wazonych_ocen[najlepsza_pozycja] / sumy_ects[najlepsza_pozycja]
     );
 
+    printf("%d\n", sumy_ects[ znajdz("444444", nr_albumow, ile_studentow) ]);
+
 }
 
 int main(int argc, char ** argv) {
     student dane[100];
     int ile;
-    // dane == &dane[0]
-    ile = wczytaj(dane, argv[1]);
-    
 
-    najlepszy_przedmiot(dane, ile);
+    ile = wczytaj(dane, argv[1]);
+    wypisz(dane, ile);
+
     najlepszy_student(dane, ile);
 
     return 0;
