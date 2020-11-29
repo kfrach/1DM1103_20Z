@@ -1,7 +1,7 @@
 DEPS=main.o obsluga_pliku.o operacje_matematyczne.o
 
 
-p7_3: $(DEPS)
+zad6: $(DEPS)
 	cc $(DEPS) -o $@ -Wall --pedantic
 
 %.o:%.c
